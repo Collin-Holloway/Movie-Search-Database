@@ -21,7 +21,7 @@ MongoClient.connect(dbConncetionStr)
 app.use(express.urlencoded({extended : true}))
 app.use(express.json())
 app.use(cors)
-
+//The below get brings back autocomplete terms while searching
 app.get("/search", async (req, res) => {
     try {
         let result = await collection.aggregate([
@@ -40,7 +40,18 @@ app.get("/search", async (req, res) => {
         ]).toArray()
         response.send(result)
     } catch (error) {
-        response.status(500)
+        response.status(500).send({message: error.message})
+    }
+})
+//The below get brings back specific information of the serach
+app.get("/get/:id", async (req, res) => {
+    try {
+        let result = await collection.findOne({
+            "_id" : ObjectId(request.params.id)
+        })
+        response.send(result)
+    } catch (error){
+        response.status(500).send({message: error.message})
     }
 })
 
